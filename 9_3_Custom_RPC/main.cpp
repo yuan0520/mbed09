@@ -51,12 +51,19 @@ void LEDControl (Arguments *in, Reply *out)   {
     char strings[20];
     int led = x;
     int on = y;
-    sprintf(strings, "/myled%d/write %d", led, on);
-    strcpy(buffer, strings);
-    RPC::call(buffer, outbuf);
-    if (success) {
-        out->putData(buffer);
-    } else {
-        out->putData("Failed to execute LED control.");
+
+    while(1){
+        sprintf(strings, "/myled%d/write %d", led, on);
+        strcpy(buffer, strings);
+        RPC::call(buffer, outbuf);
+        if (success) {
+            out->putData(buffer);
+        } else {
+            out->putData("Failed to execute LED control.");
+        }
+        if(on == 1) on = 0;
+        else on = 1;
+        ThisThread::sleep_for(500ms);
     }
+    
 }
